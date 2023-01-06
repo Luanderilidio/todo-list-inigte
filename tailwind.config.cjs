@@ -4,8 +4,11 @@ module.exports = {
   theme: {
     colors: {
       white: "#FFFFFF",
-      blue: "#4EA8DE",
-      blueDark: "#1E6F9F",
+      blue: {
+        100: "#3DB0F5",
+        200: "#4EA8DE",
+        300: "#1E6F9F",
+      },
       purple: "#8284FA",
       purpleDark: "#5E60CE",
       danger: "#E25858",
@@ -23,8 +26,9 @@ module.exports = {
       fontFamily: {
         Anton: ["Anton", "sans-serif"],
         Roboto: ["Roboto", "sans-serif"],
+        Inter: ["Inter", "sans-serif"],
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };
