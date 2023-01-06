@@ -1,10 +1,12 @@
 import { LightningSlash, PlusCircle } from "phosphor-react";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import "./App.css";
 import Header from "./Components/Header";
 import Task from "./Components/Task";
 
-interface TaskProps {
+export interface TaskProps {
+  id: string;
   text: string;
   state: boolean;
 }
@@ -12,10 +14,11 @@ interface TaskProps {
 function App() {
   const [tasks, setTasks] = useState<TaskProps[]>([]);
   const [textTask, setTextTask] = useState("");
+  const [tasksChecks, setTasksCheks] = useState(0);
 
   const handleCreateNewTask = (event: FormEvent) => {
     event.preventDefault();
-    setTasks([{ text: textTask, state: false }, ...tasks]);
+    setTasks([{ id: uuidv4(), text: textTask, state: false }, ...tasks]);
     setTextTask("");
   };
 
@@ -28,7 +31,29 @@ function App() {
       return task !== taskToDelete;
     });
     setTasks(newTasksList);
+    const listTasksCheck = newTasksList.filter((element) => {
+      return element.state === true;
+    });
+    setTasksCheks(listTasksCheck.length);
+    console.log(listTasksCheck.length);
   };
+
+  const handleCheckBox = (taskOnCheck: TaskProps) => {
+    const newTasksList = tasks.map((task) => {
+      if (task === taskOnCheck) {
+        task.state = !task.state;
+      }
+      return task;
+    });
+    // console.log(newTasksList);
+    setTasks(newTasksList);
+    const listTasksCheck = newTasksList.filter((element) => {
+      return element.state === true;
+    });
+    setTasksCheks(listTasksCheck.length);
+    console.log(listTasksCheck.length);
+  };
+
   return (
     <div className="grid grid-cols-6 w-full">
       <div className="col-span-6 z-0 ">
@@ -59,12 +84,14 @@ function App() {
         <div className="flex justify-between gap-3">
           <div className="flex gap-2 items-center">
             <p className="text-blue-200">Tarefas Criadas</p>
-            <p className="p-1 rounded-3xl bg-gray-400">{tasks.length}</p>
+            <p className="p-2 rounded-3xl bg-gray-400">{tasks.length}</p>
           </div>
           <div>
             <div className="flex gap-2 items-center">
               <p className="text-purpleDark">Tarefas Concluidas</p>
-              <p className="p-1 rounded-full bg-gray-400">0</p>
+              <p className="p-2 rounded-full bg-gray-400">
+                {tasksChecks} de {tasks.length}
+              </p>
             </div>
           </div>
         </div>
@@ -81,10 +108,12 @@ function App() {
           <>
             {tasks.map((element) => (
               <Task
+                key={element.id}
                 text={element.text}
                 deleteTask={deleteTask}
                 task={element}
                 check={element.state}
+                checkTask={handleCheckBox}
               />
             ))}
           </>
